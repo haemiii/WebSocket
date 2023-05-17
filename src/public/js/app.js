@@ -59,3 +59,17 @@ socket.on("bye", (left) => {
 });
 
 socket.on("new_message", addMessage);
+
+socket.on("room_change", (room) => {
+  roomList.innerHTML = "";
+
+  if (room.length === 0) {
+    return;
+  }
+  const roomList = welcome.querySelector("ul");
+  room.forEach((room) => {
+    const li = document.createElement("li");
+    li.innerText = room;
+    roomList.append(li);
+  });
+}); // (msg)=>console.log(msg)와 같다

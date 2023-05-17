@@ -18,6 +18,21 @@ const handleListen = () => console.log(`Listening on http://localhost:3000`);
 const server = http.createServer(app); //http 서버
 const io = SocketIo(server); //socketio 서버
 
+function publicRooms() {
+  const {
+    sockets: {
+      adapter: { sids, rooms },
+    },
+  } = io;
+  const publicRooms = [];
+  rooms.forEach((_, key) => {
+    if (sids.get(key) === undefined) {
+      publicRooms.push(key);
+    }
+  });
+  return publicRooms;
+}
+
 io.on("connection", (socket) => {
   socket["nickname"] = "Anon";
   socket.onAny((event) => {
@@ -27,11 +42,15 @@ io.on("connection", (socket) => {
     socket.join(roomName);
     done(); // callback function(front에서 보낸 함수!)
     socket.to(roomName).emit("welcome", socket.nickname); // 나를 제외하고 다른사람들에게 보냄!
+    io.socket.emit("room_change", publicRooms());
   });
   socket.on("disconnecting", () => {
     socket.rooms.forEach((room) => {
       socket.to(room).emit("bye", socket.nickname);
     });
+  });
+  socket.on("disconnect", () => {
+    io.socket.emit("room_change", publicRooms());
   });
   socket.on("new_message", (msg, room, done) => {
     socket.to(room).emit("new_message", `${socket.nickname}: ${msg}`);
