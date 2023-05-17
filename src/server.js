@@ -22,6 +22,7 @@ io.on("connection", (socket) => {
   socket.on("enter_room", (roomName, done) => {
     socket.join(roomName);
     done(); // callback function(front에서 보낸 함수!)
+    socket.to(roomName).emit("welcome");
   });
 });
 // const wss = new WebSocket.Server({ server }); //webSocket 서버
