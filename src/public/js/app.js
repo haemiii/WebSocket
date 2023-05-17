@@ -61,12 +61,12 @@ socket.on("bye", (left) => {
 socket.on("new_message", addMessage);
 
 socket.on("room_change", (room) => {
+  const roomList = welcome.querySelector("ul");
   roomList.innerHTML = "";
 
   if (room.length === 0) {
     return;
   }
-  const roomList = welcome.querySelector("ul");
   room.forEach((room) => {
     const li = document.createElement("li");
     li.innerText = room;

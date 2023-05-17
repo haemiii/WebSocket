@@ -33,6 +33,10 @@ function publicRooms() {
   return publicRooms;
 }
 
+function countRoom(roomName) {
+  io.sockets.adapter.rooms.get(roomName)?.size;
+}
+
 io.on("connection", (socket) => {
   socket["nickname"] = "Anon";
   socket.onAny((event) => {
@@ -42,7 +46,7 @@ io.on("connection", (socket) => {
     socket.join(roomName);
     done(); // callback function(front에서 보낸 함수!)
     socket.to(roomName).emit("welcome", socket.nickname); // 나를 제외하고 다른사람들에게 보냄!
-    io.socket.emit("room_change", publicRooms());
+    io.sockets.emit("room_change", publicRooms());
   });
   socket.on("disconnecting", () => {
     socket.rooms.forEach((room) => {
@@ -50,7 +54,7 @@ io.on("connection", (socket) => {
     });
   });
   socket.on("disconnect", () => {
-    io.socket.emit("room_change", publicRooms());
+    io.sockets.emit("room_change", publicRooms());
   });
   socket.on("new_message", (msg, room, done) => {
     socket.to(room).emit("new_message", `${socket.nickname}: ${msg}`);
