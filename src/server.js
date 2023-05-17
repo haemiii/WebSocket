@@ -19,22 +19,27 @@ const server = http.createServer(app); //http 서버
 const io = SocketIo(server); //socketio 서버
 
 io.on("connection", (socket) => {
+  socket["nickname"] = "Anon";
   socket.onAny((event) => {
     console.log(`Socket Event: ${event}`);
   });
   socket.on("enter_room", (roomName, done) => {
     socket.join(roomName);
     done(); // callback function(front에서 보낸 함수!)
-    socket.to(roomName).emit("welcome"); // 나를 제외하고 다른사람들에게 보냄!
+    socket.to(roomName).emit("welcome", socket.nickname); // 나를 제외하고 다른사람들에게 보냄!
   });
   socket.on("disconnecting", () => {
     socket.rooms.forEach((room) => {
-      socket.to(room).emit("bye");
+      socket.to(room).emit("bye", socket.nickname);
     });
   });
   socket.on("new_message", (msg, room, done) => {
-    socket.to(room).emit("new_message", msg);
+    socket.to(room).emit("new_message", `${socket.nickname}: ${msg}`);
     done();
+  });
+
+  socket.on("nickname", (nickname) => {
+    socket["nickname"] = nickname;
   });
 });
 // const wss = new WebSocket.Server({ server }); //webSocket 서버
