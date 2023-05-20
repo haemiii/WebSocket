@@ -10,11 +10,16 @@ html(lang="en")
         header 
             h1 It works!
         main
-            div#myStream 
-                video#myFace(autoplay, playsinline, width="400", height="400")
+            div#welcome
+                form
+                    input(type="text", placeholder="room name")
+                    button Enter
+            div#call
+                div#myStream 
+                    video#myFace(autoplay, playsinline, width="400", height="400")
 
-                button#mute Mute 
-                button#camera Turn Camera Off
-                select#cameras 
+                    button#mute Mute 
+                    button#camera Turn Camera Off
+                    select#cameras 
         script(src="/socket.io/socket.io.js")     
         script(src="/public/js/app.js")

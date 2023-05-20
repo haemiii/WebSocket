@@ -2,6 +2,7 @@ import express from "express";
 // import WebSocket from "ws";
 import SocketIo from "socket.io";
 import http from "http";
+import { doesNotMatch } from "assert";
 
 const app = express();
 
@@ -17,5 +18,13 @@ const handleListen = () => console.log(`Listening on http://localhost:3000`);
 
 const server = http.createServer(app); //http 서버
 const io = SocketIo(server);
+
+io.on("connection", (socket) => {
+  socket.on("join_room", (roomName, done) => {
+    socket.join(roomName);
+    done();
+    socket.to(roomName).emit("welcome");
+  });
+});
 
 server.listen(3000, handleListen);
