@@ -154,7 +154,20 @@ socket.on("ice", (ice) => {
 
 // RTC Code
 function makeConnection() {
-  myPeerConnection = new RTCPeerConnection();
+  myPeerConnection = new RTCPeerConnection({
+    iceServers: [
+      // stun server : 공용주소를 알려주는 서버
+      {
+        urls: [
+          "stun:stun.l.google.com:19302",
+          "stun:stun1.l.google.com:19302",
+          "stun:stun2.l.google.com:19302",
+          "stun:stun3.l.google.com:19302",
+          "stun:stun4.l.google.com:19302",
+        ],
+      },
+    ],
+  });
   myPeerConnection.addEventListener("icecandidate", handleIce); // icecandidate 프로토콜
   myPeerConnection.addEventListener("addstream", handleAddStream);
   myStream
