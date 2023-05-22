@@ -14,6 +14,7 @@ let muted = false;
 let cameraOff = false;
 let roomName;
 let myPeerConnection;
+let myDataChannel;
 
 async function getCameras() {
   try {
@@ -121,6 +122,8 @@ welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 // Socket Code
 
 socket.on("welcome", async () => {
+  myDataChannel = myPeerConnection.createDataChannel("chat"); //data channel
+  myDataChannel.addEventListener("message", (event) => {});
   //offer를 생성하는 쪽에서만 실행되는 코드!
   // 3. offer 생성 -> 다른 브라우저가 참가 할 수 있도록 초대장을 만듬
   const offer = await myPeerConnection.createOffer();
@@ -132,6 +135,9 @@ socket.on("welcome", async () => {
 });
 
 socket.on("offer", async (offer) => {
+  myDataChannel.addEventListener("datachannel", (data) => {
+    console.log(data);
+  });
   // 5. offer를 받는 쪽에서 실행
   console.log("received offer");
 
